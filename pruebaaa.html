@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <!-- Importar Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        <!-- Importar Font Awesome CSS -->
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        />
+        <style>
+            /* Estilos personalizados */
+            .user-card {
+                border: 1px solid red;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                overflow: auto;
+                max-height: 100%;
+            }
+            .user-card table {
+                width: 100%;
+                margin: 0;
+                border-collapse: collapse;
+            }
+            .user-card th,
+            .user-card td {
+                text-align: center;
+                padding: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .activity {
+                word-wrap: break-word;
+            }
+            /* Estilos para el overlay */
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 9999;
+                display: none;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box_asignaciones" class="box box-danger box-solid">
+            <div class="box-header with-border dragg">
+                <h3 class="box-title">
+                    <span class="fa fa-list-alt"></span>&nbsp;Asignaciones
+                </h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="container">
+                    <h1 class="text-center">Lista de Usuarios</h1>
+                    <div id="userCards" class="row"></div>
+                </div>
+
+                <!-- Importar jQuery -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <!-- Importar Bootstrap JS -->
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+                <script>
+                    // Función para obtener los nombres de usuario desde la API
+                    function obtenerUsuarios() {
+                        $.ajax({
+                            url: "https://jsonplaceholder.typicode.com/users",
+                            type: "GET",
+                            dataType: "json",
+                            success: function (data) {
+                                mostrarUsuarios(data);
+                            },
+                            error: function (error) {
+                                console.error("Error al obtener usuarios:", error);
+                            },
+                        });
+                    }
+
+                    // Función para mostrar los nombres de usuario en cartas con estructura de tabla
+                    function mostrarUsuarios(usuarios) {
+                        const userCardsContainer = $("#userCards");
+                        usuarios.forEach((usuario) => {
+                            const activity = usuario.email;
+                            const cardHtml = `
+                            <div class="col-lg-4 col-md-6">
+                                <div class="user-card">
+                                    <h3 class="text-center">${usuario.name}</h3>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th style="padding: 0">No.</th>
+                                                <th style="padding: 0">Actividad</th>
+                                                <th style="padding: 0">Estado</th>
+                                                <th style="padding: 0">Prioridad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding: 0">001</td>
+                                                <td class="activity" style="padding: 0">${activity}</td>
+                                                <td style="padding: 0">En proceso</td>
+                                                <td style="padding: 0">Alta</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0">002</td>
+                                                <td class="activity" style="padding: 0">Enviar correo</td>
+                                                <td style="padding: 0">Completado</td>
+                                                <td style="padding: 0">Baja</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0">003</td>
+                                                <td class="activity" style="padding: 0">Revisar documento</td>
+                                                <td style="padding: 0">Pendiente</td>
+                                                <td style="padding: 0">Media</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                            userCardsContainer.append(cardHtml);
+                        });
+                    }
+
+                    // Llamar a la función para obtener usuarios al cargar la página
+                    $(document).ready(function () {
+                        obtenerUsuarios();
+                    });
+                </script>
+            </div>
+            <!-- Overlay de carga -->
+            <div class="overlay">
+                <i class="fa fa-spinner fa-spin"></i>
+            </div>
+        </div>
+    </body>
+</html>

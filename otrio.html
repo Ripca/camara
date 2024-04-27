@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Requests</title>
+        <link
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="text-center">Lista de Usuarios</h1>
+            <div id="userCards" class="row"></div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            // Función para obtener los nombres de usuario desde la API
+            function obtenerUsuarios() {
+                $.ajax({
+                    url: "https://jsonplaceholder.typicode.com/users",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        mostrarUsuarios(data);
+                    },
+                    error: function (error) {
+                        console.error("Error al obtener usuarios:", error);
+                    },
+                });
+            }
+
+            // Función para mostrar los nombres de usuario en cartas con estructura de tabla
+            function mostrarUsuarios(usuarios) {
+                const userCardsContainer = $("#userCards");
+                usuarios.forEach((usuario) => {
+                    const activity = usuario.email;
+                    const cardHtml = `
+                    <div class="col-lg-4 col-md-6">
+                        <div class="user-card panel panel-default">
+                            <div class="panel-heading" style="background-color: #f5f5f5; color: #333;">
+                                <h3 class="panel-title text-center">${usuario.name}</h3>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="padding: 0; color: #333;">No.</th>
+                                            <th style="padding: 0">Actividad</th>
+                                            <th style="padding: 0">Estado</th>
+                                            <th style="padding: 0">Prioridad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="padding: 0; color: #333;">001</td>
+                                            <td class="activity" style="padding: 0">${activity}</td>
+                                            <td style="padding: 0">En proceso</td>
+                                            <td style="padding: 0">Alta</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 0; color: #333;">002</td>
+                                            <td class="activity" style="padding: 0">Enviar corre1233333323eweweo</td>
+                                            <td style="padding: 0">Completado</td>
+                                            <td style="padding: 0">Baja</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 0; color: #333;">003</td>
+                                            <td class="activity" style="padding: 0">Revisar documeaaasaaasssssnto</td>
+                                            <td style="padding: 0">Pendiente</td>
+                                            <td style="padding: 0">Media</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                    userCardsContainer.append(cardHtml);
+                });
+            }
+
+            // Llamar a la función para obtener usuarios al cargar la página
+            $(document).ready(function () {
+                obtenerUsuarios();
+            });
+        </script>
+    </body>
+</html>

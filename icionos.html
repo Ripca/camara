@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Index</title>
+        <!-- Add necessary CSS and JS libraries -->
+        <style>
+            .user-card {
+                border: 1px solid red;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+            .user-card:hover {
+                box-shadow: 0 0 10px #d6776d;
+            }
+
+            .user-card th,
+            .user-card td {
+                text-align: center;
+                padding: 0;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .nav-tabs > li.active > a {
+                background-color: #df0000;
+            }
+
+            .wrapper2 {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                grid-gap: 10px;
+                grid-auto-flow: dense;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box_peticiones" class="box box-danger box-solid">
+            <div class="box-header with-border dragg">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a
+                            data-toggle="tab"
+                            href="#asignaciones"
+                            id="asignacionesResponsables"
+                            ><i class="fa fa-solid fa-users" style="margin-right: 4px"></i
+                            >Asignaciones</a
+                        >
+                    </li>
+                </ul>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="tab-content">
+                            <div id="asignaciones" class="tab-pane fade in active">
+                                <!-- Aquí se insertarán las tarjetas de usuarios -->
+                                <div class="row" id="userCards"></div>
+                            </div>
+                            <div class="overlay">
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import jQuery library -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                obtenerResponsables();
+            });
+
+            function obtenerResponsables() {
+                $.ajax({
+                    url: "https://jsonplaceholder.typicode.com/users",
+                    type: "GET",
+                    async: true,
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        mostrarResponsables(data);
+                    },
+                    error: function (error) {
+                        console.error("Error al obtener los responsables:", error);
+                    },
+                });
+            }
+
+            function mostrarResponsables(responsables) {
+                const userCardsContainer = $("#userCards");
+                userCardsContainer.empty();
+                responsables.forEach((responsable, index) => {
+                    const cardHtml = `
+                <div class="col-lg-6">
+                    <div class="user-card">
+                        <h4 class="text-center">${responsable.name}</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 0; background-color:#D6776D;">No.</th>
+                                        <th style="padding: 0; background-color:#D6776D;">Actividad</th>
+                                        <th style="padding: 0; background-color:#D6776D;">Estado</th>
+                                        <th style="padding: 0; background-color:#D6776D;">Prioridad</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-${index}">
+                                    <!-- Aquí se insertarán las filas de actividades -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`;
+                    userCardsContainer.append(cardHtml);
+                    obtenerActividadesResponsables(index);
+                });
+            }
+
+            function obtenerActividadesResponsables(index) {
+                $.ajax({
+                    url: `https://jsonplaceholder.typicode.com/todos?userId=${index + 1}`,
+                    type: "GET",
+                    dataType: "json",
+                    async: true,
+                    success: function (data) {
+                        console.log(data);
+                        mostrarActividadesResponsables(data, index);
+                    },
+                    error: function (error) {
+                        console.error(
+                            "Error al obtener las actividades de los responsables:",
+                            error
+                        );
+                    },
+                });
+            }
+
+            function mostrarActividadesResponsables(actividades, index) {
+                const tbody = $(`#tbody-${index}`);
+                actividades.forEach((actividad) => {
+                    const rowHtml = `
+                <tr>
+                    <td style="padding: 0">${actividad.id}</td>
+                    <td class="activity" style="padding: 0">${actividad.title}</td>
+                    <td style="padding: 0">${
+                        actividad.completed ? "Completado" : "Pendiente"
+                    }</td>
+                    <td style="padding: 0">${actividad.priority}</td>
+                </tr>`;
+                    tbody.append(rowHtml);
+                });
+            }
+        </script>
+    </body>
+</html>
